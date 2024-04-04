@@ -34,9 +34,9 @@ def get_movie_genres(movies) :
         # Get the second div element
         
         genre_tab = genre_themes_parent.find('div', class_= 'text-sluglist capitalize')
-        genre_tags = genre_tab.find_all(class_='text-slug')
+        genre_tags = genre_tab.find_all(class_='text-slug') 
         genres = [tag.text.strip() for tag in genre_tags]
-        genres_total.append(genres)
+        genres_total.append(genres) 
 
         if len(div_elements) > 1:
             theme_tab = genre_tab.find_next_sibling('div', class_= 'text-sluglist capitalize')
@@ -52,7 +52,7 @@ def get_movie_genres(movies) :
 #(We can see which themes are most often seens with certain genres, and recommend movies that have both those themes and genres)
 #maybe map the genres to the themes?
 movies_test= get_watched('jay')
-print(movies_test)
+print(movies_test) 
 
 genres_test, themes_test, dict = get_movie_genres(movies_test)
 print(dict)

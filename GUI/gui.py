@@ -52,7 +52,7 @@ send_button = tkinter.Button(root, text="Send", command=lambda: send_message()).
 ## TO-DO: format this how we want
 text_area.insert(
     tkinter.END,
-    f"Chatbot: Hi! Welcome to the Movie Recommendation Engine. Please enter a short plot description of a movie you would like to see and your preferred genre.\n\n",
+    f"Chatbot: Hi! Welcome to the Movie Recommendation Engine. Please enter a short plot description of a movie you would like to see or connect your Letterboxd for a personalized recommendation!\n\n",
 )
 
 
