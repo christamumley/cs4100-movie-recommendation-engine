@@ -1,6 +1,7 @@
 import tkinter
 from tkinter import *
 from PIL import ImageTk, Image
+import customtkinter
 
 # GUI for movie recommendation engine
 # Chat bot
@@ -10,9 +11,9 @@ from PIL import ImageTk, Image
 
 
 # Function: given a user's inputted plot description and preferred genre, respond a certain way
-def chat_response(plot_input, genre_input):
+def chat_response(genre_input):
     # Normalize the user's input
-    plot_input = plot_input.lower()
+    # plot_input = plot_input.lower()
     genre_input = genre_input.lower()
 
     ## TO-DO: pass user input to model and get resulting output to return
@@ -21,9 +22,8 @@ def chat_response(plot_input, genre_input):
 
     return response
 
-
 ### creating the GUI
-root = tkinter.Tk()
+root = customtkinter.CTk()
 root.title("Movie Recommendation Chatbot")
 
 # Logo
@@ -35,7 +35,7 @@ Button(
 ).grid(row=0, columnspan=2, pady=(10, 0))
 
 # Scrollbar
-# scrollbar = Scrollbar(root, orient="vertical")
+scrollbar = Scrollbar(root, orient="vertical")
 
 # Chat text area
 text_area = tkinter.Text(
@@ -46,45 +46,49 @@ text_area = tkinter.Text(
     height=20,
     wrap="word",
     relief=FLAT,
-    # yscrollcommand=scrollbar.set,
+    font=("Helvetica" + "bold"),
+    yscrollcommand=scrollbar.set,
 )
-text_area.grid(row=1, columnspan=2)
+text_area.grid(row=1, columnspan=3)
 text_area.yview_scroll
 
-# scrollbar.config(command=text_area.yview)
-# scrollbar.grid(row=1, column=2, sticky="ns")
+scrollbar.config(command=text_area.yview)
+scrollbar.grid(row=1, column=3, sticky="ns")
 
-# User input field: Plot
-plot_label = tkinter.Label(root, text="Plot Description:", bg="#4995ff")
-plot_label.grid(row=2, column=0, padx=(10, 5), sticky="ew")
-plot_field = tkinter.Entry(root, width=50, exportselection=0)
-plot_field.grid(row=2, column=1, padx=(0, 10), sticky="news")
-
-# User input field: Genre
-genre_label = tkinter.Label(root, text="Preferred Genre:", bg="#4995ff")
-genre_label.grid(row=3, column=0, padx=(10, 5), sticky="ew")
-genre_field = tkinter.Entry(root, width=50, exportselection=0)
-genre_field.grid(row=3, column=1, padx=(0, 10), sticky="news")
+# User input field:
+genre_field = customtkinter.CTkEntry(root, corner_radius=3, width=325, exportselection=0)
+genre_field.grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky="news")
 genre_field.bind("<Return>", (lambda event: send_message()))
 
 # Enter button
-enter_button = tkinter.Button(
-    root,
-    text="Generate Recommendations",
-    font=("Helvetica" + "bold"),
-    command=lambda: send_message(),
-).grid(row=4, column=1, pady=(0, 10))
+# MUST attribute license 
+# "https://www.flaticon.com/free-icons/paper-plane by smashicons"
+send = customtkinter.CTkImage(light_image=Image.open("images\\plane.png"),
+                              size=(32, 32))
+button = customtkinter.CTkButton(master=root,
+                                 fg_color=("#4995ff", "#4995ff"),  
+                                 image=send,
+                                 text="",
+                                 corner_radius=10,
+                                 width=50,
+                                 height=50,
+                                 command=lambda: send_message()).grid(row=3, column=2, pady=(10, 10), padx=(0,10))
 
 # Letterboxd button
-lb = Image.open("images\\lb.png").resize((250, 100))
-pic_lib = ImageTk.PhotoImage(lb)
-lb_button = Button(
+pic_lib = customtkinter.CTkImage(light_image=Image.open("images\\lb.png"), 
+                            size=(114, 50))
+lb_button = customtkinter.CTkButton(
     root,
-    text="Connect Account",
+    text="",
     image=pic_lib,
     compound=BOTTOM,
     command=lambda: letterbox_connect(),
-)
+    width= 114, 
+    height=50,
+    corner_radius= 0,
+    fg_color= 'black',
+    hover_color = '#6e6e6e'
+).grid(row=3, column=0, pady=(10, 10), padx=(10,0))
 
 # text config for chat labels
 text_area.tag_configure(
@@ -120,28 +124,29 @@ text_area.insert(
 
 # Displaying button
 text_area.window_create(END, window=lb_button, padx=200, pady=20)
-
+text_area.config(state=DISABLED)
 
 # Function: send message
 def send_message():
     # Get user input
-    plot_input = plot_field.get()
+    # plot_input = plot_field.get()
     genre_input = genre_field.get()
 
     # Clear input fields
-    plot_field.delete(0, tkinter.END)
+    # plot_field.delete(0, tkinter.END)
     genre_field.delete(0, tkinter.END)
 
     # Create response
-    response = chat_response(plot_input, genre_input)
+    response = chat_response(genre_input)
 
     # Display response
     ## TO-DO: format this how we want
+    text_area.config(state=NORMAL)
     text_area.insert(tkinter.END, f"\n   ")
     text_area.insert(tkinter.END, f"      User:     ", "boldtextuser")
     text_area.insert(
         tkinter.END,
-        f"\t Plot description: {plot_input}\nPreferred genre: {genre_input}\n\n",
+        f"\t Plot description: \nPreferred genre: \n\n",
         "hang",
     )
     text_area.insert(tkinter.END, f"   ")
@@ -150,11 +155,16 @@ def send_message():
     text_area.insert(
         tkinter.END, f"\nFeel free to ask for another recommendation!\n\n", "hang"
     )
+    text_area.config(state=DISABLED)
+    text_area.see(tkinter.END)
 
 
 # Function: TO-DO connect Letterboxd
 def letterbox_connect():
     return
 
+# open at the center of the screen 
+root.eval('tk::PlaceWindow . center')
+root.configure(fg_color='#303030')
 
 root.mainloop()
