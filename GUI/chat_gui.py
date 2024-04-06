@@ -1,28 +1,101 @@
-import tkinter
+import tkinter 
 from tkinter import *
 from PIL import ImageTk, Image
 import customtkinter
 
-# GUI for movie recommendation engine
-# Chat bot
+import os
+import sys
+import threading
 
 # basic version with tkinter created using
 # https://medium.com/@vishwanathmuthuraman_92476/building-a-chatbot-with-python-and-tkinter-library-for-the-gui-390a747dadf6
 
+# start importing the question intent bot as soon as the program starts 
+# so we can display the loading message before its done
+sys.path.append(os.path.abspath('..'))
 
+def import_():
+    import moviebot
+    global get_label 
+    get_label = moviebot.get_label
+
+import_thread = threading.Thread(target=import_)
+import_thread.start()
+
+###################################### TKINTER FUNCTIONS #########################################
 # Function: given a user's inputted plot description and preferred genre, respond a certain way
-def chat_response(genre_input):
+def chat_response(user_input):
     # Normalize the user's input
-    # plot_input = plot_input.lower()
-    genre_input = genre_input.lower()
-
-    ## TO-DO: pass user input to model and get resulting output to return
-    # response = f"Recommended Movie: {recommend_movie(plot_input, genre_input)}
-    response = "Based on your preferences, I would recommend: "
+    user_input = user_input.lower()
+    response = get_label(user_input)
 
     return response
 
-### creating the GUI
+def loading_message():
+    text_area.config(state=NORMAL)
+    text_area.insert(tkinter.END, f"\n   ")
+    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+    text_area.insert(
+        tkinter.END,
+        f"\t One second, data is still loading...",
+        "hang",
+    )
+    text_area.config(state=DISABLED)
+    
+
+def greeting_message():
+
+    import_thread.join()
+
+    text_area.config(state=NORMAL)
+    text_area.insert(tkinter.END, f"\n   ")
+    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+    text_area.insert(
+        tkinter.END,
+        f"\t Hi! Welcome to the FLIX Rec Movie Recommendation Engine.\n"
+        + f"Please enter a short plot description of a movie you would like to see, "
+        + f"along with preferred genre, "
+        + f"or click the button below to connect your Letterboxd for a personalized recommendation!",
+        "hang",
+    )
+    text_area.config(state=DISABLED)
+
+
+# Function: send message
+def send_message():
+    # Get user input
+    user_input = user_field.get()
+
+    # Clear input fields
+    user_field.delete(0, tkinter.END)
+
+    # Create response
+    response = chat_response(user_input)
+
+    # Display response
+    ## TO-DO: format this how we want
+    text_area.config(state=NORMAL)
+    text_area.insert(tkinter.END, f"\n   ")
+    text_area.insert(tkinter.END, f"      User:     ", "boldtextuser")
+    text_area.insert(
+        tkinter.END,
+        f"\t {user_input}\n",
+        "hang",
+    )
+    text_area.insert(tkinter.END, f"   ")
+    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+    text_area.insert(tkinter.END, f"\t {response}\n", "hang")
+    # text_area.insert(
+    #     tkinter.END, f"\nFeel free to ask for another recommendation!\n\n", "hang"
+    # )
+    text_area.config(state=DISABLED)
+    text_area.see(tkinter.END)
+
+# Function: TO-DO connect Letterboxd
+def letterbox_connect():
+    return
+
+################################################## GUI DEFINITION #############################
 root = customtkinter.CTk()
 root.title("Movie Recommendation Chatbot")
 
@@ -56,9 +129,9 @@ scrollbar.config(command=text_area.yview)
 scrollbar.grid(row=1, column=3, sticky="ns")
 
 # User input field:
-genre_field = customtkinter.CTkEntry(root, corner_radius=3, width=325, exportselection=0)
-genre_field.grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky="news")
-genre_field.bind("<Return>", (lambda event: send_message()))
+user_field = customtkinter.CTkEntry(root, corner_radius=3, width=325, exportselection=0)
+user_field.grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky="news")
+user_field.bind("<Return>", (lambda event: send_message()))
 
 # Enter button
 # MUST attribute license 
@@ -110,61 +183,17 @@ text_area.config(spacing1=5)
 text_area.config(spacing2=5)
 text_area.config(spacing3=5)
 
-# Displaying greeting text
-text_area.insert(tkinter.END, f"\n   ")
-text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-text_area.insert(
-    tkinter.END,
-    f"\t Hi! Welcome to the FLIX Rec Movie Recommendation Engine.\n"
-    + f"Please enter a short plot description of a movie you would like to see, "
-    + f"along with preferred genre, "
-    + f"or click the button below to connect your Letterboxd for a personalized recommendation!",
-    "hang",
-)
+# Displaying greeting/loading text
+loading_message()
 
 # Displaying button
 text_area.window_create(END, window=lb_button, padx=200, pady=20)
 text_area.config(state=DISABLED)
 
-# Function: send message
-def send_message():
-    # Get user input
-    # plot_input = plot_field.get()
-    genre_input = genre_field.get()
-
-    # Clear input fields
-    # plot_field.delete(0, tkinter.END)
-    genre_field.delete(0, tkinter.END)
-
-    # Create response
-    response = chat_response(genre_input)
-
-    # Display response
-    ## TO-DO: format this how we want
-    text_area.config(state=NORMAL)
-    text_area.insert(tkinter.END, f"\n   ")
-    text_area.insert(tkinter.END, f"      User:     ", "boldtextuser")
-    text_area.insert(
-        tkinter.END,
-        f"\t Plot description: \nPreferred genre: \n\n",
-        "hang",
-    )
-    text_area.insert(tkinter.END, f"   ")
-    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-    text_area.insert(tkinter.END, f"\t {response}\n", "hang")
-    text_area.insert(
-        tkinter.END, f"\nFeel free to ask for another recommendation!\n\n", "hang"
-    )
-    text_area.config(state=DISABLED)
-    text_area.see(tkinter.END)
-
-
-# Function: TO-DO connect Letterboxd
-def letterbox_connect():
-    return
-
 # open at the center of the screen 
 root.eval('tk::PlaceWindow . center')
 root.configure(fg_color='#303030')
 
+# wait two seconds before joining import thread 
+root.after(2000, greeting_message)
 root.mainloop()
