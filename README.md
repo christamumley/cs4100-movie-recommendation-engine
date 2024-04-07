@@ -2,7 +2,7 @@
 ### Setup 
 #### Without retraining the chatbot model: 
 1. Go to the shared folder
-2. download the zipped "chatbot_data" file. Unzip into cs4100-movie-recommendation-engine/chatbot/data 
+2. download the zipped "data" file. Unzip into cs4100-movie-recommendation-engine/chatbot/data 
 3. download the zipped "movie_model_data" file. Unzip into cs4100-movie-recommendation-engine/Models/saved_weights 
 #### With training the chatbot model: 
 open terminal > cd to \chatbot > run `TrainChatbot.py` 
