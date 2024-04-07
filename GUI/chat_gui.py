@@ -6,6 +6,7 @@ import customtkinter
 import os
 import sys
 import threading
+import chatbot
 
 # basic version with tkinter created using
 # https://medium.com/@vishwanathmuthuraman_92476/building-a-chatbot-with-python-and-tkinter-library-for-the-gui-390a747dadf6
@@ -14,10 +15,14 @@ import threading
 # so we can display the loading message before its done
 sys.path.append(os.path.abspath('..'))
 
+current_path = os.getcwd()
+print("\n\n\n\n\nCurrent Path:", current_path)
+
 def import_():
-    import moviebot
     global get_label 
-    get_label = moviebot.get_label
+    get_label = chatbot.moviebot.get_label
+    # load model data
+    chatbot.moviebot.load()
 
 import_thread = threading.Thread(target=import_)
 import_thread.start()

@@ -20,7 +20,6 @@ def load_intents():
     Returns:
         df: pd.DataFrame
     '''
-    os.chdir('..')
     intents_file = 'intents.json'
     intents = None; 
     try:
@@ -114,6 +113,6 @@ print("Test set:")
 print(trainer.evaluate(eval_dataset=test_dataloader))
 
 ########## Save Model ###############
-# model_path = "./chatbot"
+# model_path = "./data"
 # trainer.save_model(model_path)
 # tokenizer.save_pretrained(model_path)
