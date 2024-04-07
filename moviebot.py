@@ -4,18 +4,11 @@ import os
 
 MODEL_PATH = "chatbot"
 
-############# ENSURE PARENT DIRECTORY #######
-current_directory = os.getcwd().split('\\')[-1]
-if (current_directory != 'cs4100-movie-recommendation-engine'):
-    os.chdir('..')
-
 ############## LOAD MODEL ###################
 model = BertForSequenceClassification.from_pretrained(MODEL_PATH)
 tokenizer= BertTokenizerFast.from_pretrained(MODEL_PATH)
 chatbot = pipeline("sentiment-analysis", model=model, tokenizer=tokenizer)
 
-# re-set dir
-os.chdir(current_directory)
 
 def get_label(user_text):
     '''

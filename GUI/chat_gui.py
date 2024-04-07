@@ -100,7 +100,7 @@ root = customtkinter.CTk()
 root.title("Movie Recommendation Chatbot")
 
 # Logo
-logo = Image.open("images\\logo.jpeg").resize((300, 100))
+logo = Image.open("GUI\\images\\logo.jpeg").resize((300, 100))
 photo = ImageTk.PhotoImage(logo)
 Button(
     root,
@@ -136,7 +136,7 @@ user_field.bind("<Return>", (lambda event: send_message()))
 # Enter button
 # MUST attribute license 
 # "https://www.flaticon.com/free-icons/paper-plane by smashicons"
-send = customtkinter.CTkImage(light_image=Image.open("images\\plane.png"),
+send = customtkinter.CTkImage(light_image=Image.open("GUI\\images\\plane.png"),
                               size=(32, 32))
 button = customtkinter.CTkButton(master=root,
                                  fg_color=("#4995ff", "#4995ff"),  
@@ -148,7 +148,7 @@ button = customtkinter.CTkButton(master=root,
                                  command=lambda: send_message()).grid(row=3, column=2, pady=(10, 10), padx=(0,10))
 
 # Letterboxd button
-pic_lib = customtkinter.CTkImage(light_image=Image.open("images\\lb.png"), 
+pic_lib = customtkinter.CTkImage(light_image=Image.open("GUI\\images\\lb.png"), 
                             size=(114, 50))
 lb_button = customtkinter.CTkButton(
     root,
@@ -194,6 +194,8 @@ text_area.config(state=DISABLED)
 root.eval('tk::PlaceWindow . center')
 root.configure(fg_color='#303030')
 
-# wait two seconds before joining import thread 
-root.after(2000, greeting_message)
-root.mainloop()
+############################## run func #########################################
+def run(): 
+    # wait two seconds before joining import thread 
+    root.after(2000, greeting_message)
+    root.mainloop()
