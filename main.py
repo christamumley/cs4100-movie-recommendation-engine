@@ -2,6 +2,8 @@ import threading
 ## run gui
 from GUI.chat_gui import run as run_gui
 from GUI.chat_gui import get_root
+from Models.movie_models import load as movie_model_load
+
 
 root = get_root()
 
@@ -11,11 +13,11 @@ def import_():
     root.event_generate("<<loading>>", when="tail")
     import chatbot.moviebot 
     chatbot.moviebot.load()
+    movie_model_load() 
     root.event_generate("<<greet>>", when="tail")
 
 import_thread = threading.Thread(target=import_)
 import_thread.start()
-
 
 
 def main():
