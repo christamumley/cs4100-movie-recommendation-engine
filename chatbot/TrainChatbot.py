@@ -113,6 +113,6 @@ print("Test set:")
 print(trainer.evaluate(eval_dataset=test_dataloader))
 
 ########## Save Model ###############
-# model_path = "./data"
-# trainer.save_model(model_path)
-# tokenizer.save_pretrained(model_path)
+model_path = "./data"
+trainer.save_model(model_path)
+tokenizer.save_pretrained(model_path)
