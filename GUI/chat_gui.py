@@ -6,95 +6,12 @@ import customtkinter
 import os
 import sys
 import threading
-import chatbot
+# import chatbot
+sys.path.append(os.path.abspath('..'))
+from controller import handle_msg
 
 # basic version with tkinter created using
 # https://medium.com/@vishwanathmuthuraman_92476/building-a-chatbot-with-python-and-tkinter-library-for-the-gui-390a747dadf6
-
-# start importing the question intent bot as soon as the program starts 
-# so we can display the loading message before its done
-sys.path.append(os.path.abspath('..'))
-
-current_path = os.getcwd()
-print("\n\n\n\n\nCurrent Path:", current_path)
-
-def import_():
-    global get_label 
-    get_label = chatbot.moviebot.get_label
-    # load model data
-    chatbot.moviebot.load()
-
-import_thread = threading.Thread(target=import_)
-import_thread.start()
-
-###################################### TKINTER FUNCTIONS #########################################
-# Function: given a user's inputted plot description and preferred genre, respond a certain way
-def chat_response(user_input):
-    # Normalize the user's input
-    user_input = user_input.lower()
-    response = get_label(user_input)
-
-    return response
-
-def loading_message():
-    text_area.config(state=NORMAL)
-    text_area.insert(tkinter.END, f"\n   ")
-    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-    text_area.insert(
-        tkinter.END,
-        f"\t One second, data is still loading...",
-        "hang",
-    )
-    text_area.config(state=DISABLED)
-    
-
-def greeting_message():
-
-    import_thread.join()
-
-    text_area.config(state=NORMAL)
-    text_area.insert(tkinter.END, f"\n   ")
-    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-    text_area.insert(
-        tkinter.END,
-        f"\t Hi! Welcome to the FLIX Rec Movie Recommendation Engine.\n"
-        + f"Please enter a short plot description of a movie you would like to see, "
-        + f"along with preferred genre, "
-        + f"or click the button below to connect your Letterboxd for a personalized recommendation!",
-        "hang",
-    )
-    text_area.config(state=DISABLED)
-
-
-# Function: send message
-def send_message():
-    # Get user input
-    user_input = user_field.get()
-
-    # Clear input fields
-    user_field.delete(0, tkinter.END)
-
-    # Create response
-    response = chat_response(user_input)
-
-    # Display response
-    ## TO-DO: format this how we want
-    text_area.config(state=NORMAL)
-    text_area.insert(tkinter.END, f"\n   ")
-    text_area.insert(tkinter.END, f"      User:     ", "boldtextuser")
-    text_area.insert(
-        tkinter.END,
-        f"\t {user_input}\n",
-        "hang",
-    )
-    text_area.insert(tkinter.END, f"   ")
-    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-    text_area.insert(tkinter.END, f"\t {response}\n", "hang")
-    # text_area.insert(
-    #     tkinter.END, f"\nFeel free to ask for another recommendation!\n\n", "hang"
-    # )
-    text_area.config(state=DISABLED)
-    text_area.see(tkinter.END)
 
 # Function: TO-DO connect Letterboxd
 def letterbox_connect():
@@ -189,7 +106,7 @@ text_area.config(spacing2=5)
 text_area.config(spacing3=5)
 
 # Displaying greeting/loading text
-loading_message()
+#loading_message()
 
 # Displaying button
 text_area.window_create(END, window=lb_button, padx=200, pady=20)
@@ -199,8 +116,84 @@ text_area.config(state=DISABLED)
 root.eval('tk::PlaceWindow . center')
 root.configure(fg_color='#303030')
 
+###################################### TKINTER FUNCTIONS #########################################
+def get_root():
+    return root 
+
+# Function: given a user's inputted plot description and preferred genre, respond a certain way
+def chat_response(user_input):
+    # Normalize the user's input
+    user_input = user_input.lower()
+    response = handle_msg(user_input)
+
+    return response
+
+def loading_message(_):
+    text_area.config(state=NORMAL)
+    text_area.insert(tkinter.END, f"\n   ")
+    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+    text_area.insert(
+        tkinter.END,
+        f"\t One second, data is still loading...",
+        "hang",
+    )
+    text_area.config(state=DISABLED)
+
+
+def greeting_message(_):
+
+    text_area.config(state=NORMAL)
+    text_area.insert(tkinter.END, f"\n   ")
+    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+    text_area.insert(
+        tkinter.END,
+        f"\t Hi! Welcome to the FLIX Rec Movie Recommendation Engine.\n"
+        + f"Please enter a short plot description of a movie you would like to see, "
+        + f"along with preferred genre, "
+        + f"or click the button below to connect your Letterboxd for a personalized recommendation!",
+        "hang",
+    )
+    text_area.config(state=DISABLED)
+
+
+# Function: send message
+def send_message():
+    # Get user input
+    user_input = user_field.get()
+
+    # Clear input fields
+    user_field.delete(0, tkinter.END)
+
+    # Create response
+    response = chat_response(user_input)
+
+    # Display response
+    ## TO-DO: format this how we want
+    text_area.config(state=NORMAL)
+    text_area.insert(tkinter.END, f"\n   ")
+    text_area.insert(tkinter.END, f"      User:     ", "boldtextuser")
+    text_area.insert(
+        tkinter.END,
+        f"\t {user_input}\n",
+        "hang",
+    )
+    text_area.insert(tkinter.END, f"   ")
+    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+    text_area.insert(tkinter.END, f"\t {response}\n", "hang")
+    # text_area.insert(
+    #     tkinter.END, f"\nFeel free to ask for another recommendation!\n\n", "hang"
+    # )
+    text_area.config(state=DISABLED)
+    text_area.see(tkinter.END)
+
+def doFoo(*args):
+    print("Hello, world")
+
+############################# EVENTS TO BE CALLED FROM MAIN ####################
+
+root.bind("<<loading>>", loading_message)
+root.bind("<<greet>>", greeting_message)
+
 ############################## run func #########################################
 def run(): 
-    # wait two seconds before joining import thread 
-    root.after(2000, greeting_message)
     root.mainloop()
