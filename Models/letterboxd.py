@@ -1,15 +1,33 @@
+from collections import Counter
 import requests
 from bs4 import BeautifulSoup
 
 def get_watched(username):
     # get html 
-    url = f'https://letterboxd.com/{username}/films/'
+    url = f'https://letterboxd.com/{username}/likes/films/'
     response = requests.get(url)
     soup = BeautifulSoup(response.text, 'html.parser')
 
-    # get movie names from image alt texts
     images = soup.find_all(class_='image')
     movies = [image.get('alt') for image in images]
+
+    '''
+    Code if you want to get all the movies from all the pages
+    pagination = soup.find('div', class_='paginate-pages')
+    last_page_link = pagination.find_all('a')[-1] if pagination else None    
+    all_movies = []
+    
+    # Extract the last page number
+    num_pages = int(last_page_link.text) if last_page_link else 1
+
+    for i in range(num_pages):
+        url = f'https://letterboxd.com/{username}/likes/films/page/{i+1}/'
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+        images = soup.find_all(class_='image')
+        movies = [image.get('alt') for image in images]
+        all_movies.extend(movies)'''
+
     return movies 
 
 def get_movie_genres(movies) :
@@ -36,26 +54,42 @@ def get_movie_genres(movies) :
         genre_tab = genre_themes_parent.find('div', class_= 'text-sluglist capitalize')
         genre_tags = genre_tab.find_all(class_='text-slug') 
         genres = [tag.text.strip() for tag in genre_tags]
-        genres_total.append(genres) 
+        genres_total.extend(genres) 
 
         if len(div_elements) > 1:
             theme_tab = genre_tab.find_next_sibling('div', class_= 'text-sluglist capitalize')
             theme_tags = theme_tab.find_all(class_='text-slug')
             themes = [tag.text.strip() for tag in theme_tags]
-            themes_total.append(themes)
+            str = 'Show All…'
+            while str in themes:
+                themes.remove(str)
+            themes_total.extend(themes)
             my_dict[movie] = [genres, themes]
         else:
             my_dict[movie] = [genres]
 
     return genres_total, themes_total, my_dict
-#Some ideas on what we can do with this data, we can find the most common genres, or themes present and recommend movies based on that. 
-#(We can see which themes are most often seens with certain genres, and recommend movies that have both those themes and genres)
-#maybe map the genres to the themes?
-movies_test= get_watched('jay')
-print(movies_test) 
 
-genres_test, themes_test, dict = get_movie_genres(movies_test)
-print(dict)
+def count_items(items_list, n):
+    counter = Counter()
+    counter.update(items_list)
+    c = counter.most_common(n)
+    strings = [s[0] for s in c]
+    return strings
+
+def corresponding_themes(genres, my_dict):
+    genre_themes = {}  # Dictionary to store themes for each genre
+    for genre in genres:
+        themes = []
+        for movie, genre_nthemes in my_dict.items():
+            if(len(genre_nthemes) == 2):
+                genre_list, themes_list = genre_nthemes
+                if genre in genre_list:                        
+                    themes.extend(themes_list)
+        top_themes = count_items(themes, 6)
+        genre_themes[genre] = top_themes
+    return genre_themes
+
 
 '''
 ['We Live in Time', 'Irish Wish', 'Crossing', 'Madame Web', 'Dune: Part Two', 'My Wonderful Stranger', 'Love Lies Bleeding', 'Doctor Who: The Church on Ruby Road', 'Doctor Who: The Giggle', 'Doctor Who: Wild Blue Yonder', 'Wonka', 'Doctor Who: The Star Beast', 'Merchant Ivory', 'The Iron Claw', 'The Hunger Games: The Ballad of Songbirds & Snakes', 'Thanksgiving', "Five Nights at Freddy's", 'Chicken Run: Dawn of the Nugget', 'The Exorcist: Believer', 'Saw X', 'No One Will Save You', 'A Haunting in Venice', 'American Fiction', 'Hit Man', 'Priscilla', 'The Killer', 'Maestro', 'NYAD', 'Hoard', 'Poor Things', 'The Royal Hotel', 'The Wonderful Story of Henry Sugar', 'All of Us Strangers', 'Saltburn', 'The Holdovers', 'Ferrari', 'The Bikeriders', 'El Conde', 'Doctor Jekyll', 'Retribution', 'Gran Turismo', 'Teenage Mutant Ninja Turtles: Mutant Mayhem', 'The Boy and the Heron', 'Oppenheimer', 'Barbie', 'Insidious: The Red Door', 'Paradise', 'Mission: Impossible – Dead Reckoning Part One', 'Black Mirror: Demon 79', 'Black Mirror: Mazey Day', 'Black Mirror: Beyond the Sea', 'Black Mirror: Loch Henry', 'Black Mirror: Joan Is Awful', 'They Cloned Tyrone', 'The Flash', 'Meg 2: The Trench', 'Spider-Man: Across the Spider-Verse', 'La Chimera', 'In Our Day', 'Cobweb', 'The Taste of Things', 'Asteroid City', 'Kidnapped', 'Kubi', 'Fallen Leaves', 'The Boogeyman', 'Club Zero', 'Anatomy of a Fall', 'Killers of the Flower Moon', 'May December', 'The Zone of Interest', 'How to Have Sex']

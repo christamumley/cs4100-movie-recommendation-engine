@@ -20,7 +20,7 @@ def load_intents():
     Returns:
         df: pd.DataFrame
     '''
-    intents_file = 'intents.json'
+    intents_file = 'chatbot/intents.json'
     intents = None; 
     try:
         with open(intents_file) as file:

@@ -4,7 +4,7 @@ import os
 
 def load():
     ############## LOAD MODEL ###################
-    MODEL_PATH = r"chatbot\data"
+    MODEL_PATH = r"chatbot/data"
     model = BertForSequenceClassification.from_pretrained(MODEL_PATH)
     tokenizer= BertTokenizerFast.from_pretrained(MODEL_PATH)
     global chatbot

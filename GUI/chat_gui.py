@@ -1,5 +1,6 @@
 import tkinter 
 from tkinter import *
+from tkinter import messagebox
 from PIL import ImageTk, Image
 import customtkinter
 
@@ -8,6 +9,7 @@ import sys
 import threading
 # import chatbot
 sys.path.append(os.path.abspath('..'))
+from Models.collect_letterboxdata import collect_letterboxd_data
 from controller import handle_msg
 
 # basic version with tkinter created using
@@ -15,7 +17,44 @@ from controller import handle_msg
 
 # Function: TO-DO connect Letterboxd
 def letterbox_connect():
-    return
+    popup_window = tkinter.Toplevel(root)
+    popup_window.title("Connect Letterboxd")
+
+    icon = Image.open("GUI\\images\\foldericon.jpg").resize((150, 140))
+    folder_icon = ImageTk.PhotoImage(icon)
+    label_icon = tkinter.Label(popup_window, image=folder_icon)
+    label_icon.image = folder_icon  # Keep a reference to the image
+    label_icon.pack()
+
+    label_username = tkinter.Label(popup_window, text="Enter your username:")
+    label_username.pack()
+
+    # Add an entry widget for the user to input their username
+    entry_username = tkinter.Entry(popup_window)
+    entry_username.pack()
+
+        # Function to handle when the user clicks the "Submit" button
+    def submit_username():
+        username = entry_username.get()
+        if username:
+            popup_window.destroy()
+            text_area.config(state=NORMAL)
+            text_area.insert(tkinter.END, f"\n   ")
+            text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+            text_area.insert(
+                tkinter.END,
+                f"\t Collecting data for Username: '{username}'...",
+                "hang",)
+            text_area.config(state=DISABLED)
+            collect_letterboxd_data(username)
+        else:
+            messagebox.showerror("Error", "Please enter a username.")
+
+    # Add a button to submit the username
+    button_submit = tkinter.Button(popup_window, text="Submit", command=submit_username)
+    button_submit.pack()
+
+
 
 ################################################## GUI DEFINITION #############################
 root = customtkinter.CTk()
