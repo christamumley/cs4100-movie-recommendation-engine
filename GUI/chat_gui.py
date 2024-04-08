@@ -20,7 +20,7 @@ def letterbox_connect():
     popup_window = tkinter.Toplevel(root)
     popup_window.title("Connect Letterboxd")
 
-    icon = Image.open("GUI\\images\\foldericon.jpg").resize((150, 140))
+    icon = Image.open("GUI\\images\\foldericon.jpg").resize((250, 200))
     folder_icon = ImageTk.PhotoImage(icon)
     label_icon = tkinter.Label(popup_window, image=folder_icon)
     label_icon.image = folder_icon  # Keep a reference to the image
