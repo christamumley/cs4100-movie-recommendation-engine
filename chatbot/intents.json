@@ -147,17 +147,6 @@
    ],
    "context_set": ""
 },
- {
-   "tag": "letterboxd",
-   "patterns": [
-      "can I give you my letterboxd",
-      "letterboxd"
-   ],
-   "responses": [
-      "Sure thing. Provide me the username, please."
-   ],
-   "context_set": ""
-},
 {
    "tag": "random",
    "patterns": [
