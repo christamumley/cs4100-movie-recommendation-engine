@@ -196,8 +196,8 @@ def greeting_message(_):
     text_area.insert(
         tkinter.END,
         f"\t Hi! Welcome to the FLIX Rec Movie Recommendation Engine.\n"
-        + f"Please enter a short plot description of a movie you would like to see, "
-        + f"along with preferred genre, "
+        + f"Please enter a short plot description of a movie you would like to see "
+        + f"or your preferred genre, "
         + f"or click the button below to connect your Letterboxd for a personalized recommendation!\n",
         "hang",
     )
