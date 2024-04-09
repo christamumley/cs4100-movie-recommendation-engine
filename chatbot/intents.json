@@ -11,8 +11,7 @@
       "What's up",
       "how are ya",
       "heyy",
-      "whatsup",
-      "??? ??? ??"
+      "whatsup"
    ],
    "responses": [
       "Hello!",
@@ -40,8 +39,7 @@
    "responses": [
       "Talk to you later",
       "Goodbye!",
-      "Come back soon",
-      "Tell me how it goes!"
+      "Happy Watching!"
    ],
    "context_set": ""
 },
@@ -66,7 +64,7 @@
       "who designed you"
    ],
    "responses": [
-      "College students"
+      "This bot was made by Gauri, Smita, Thanoshi, and Christa"
    ],
    "context_set": ""
 },
@@ -126,7 +124,7 @@
       "sort of like"
    ],
    "responses": [
-      "Coming right up!"
+      "[Recommended movie]"
    ],
    "context_set": ""
 },
