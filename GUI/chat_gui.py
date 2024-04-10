@@ -1,4 +1,4 @@
-import tkinter 
+import tkinter
 from tkinter import *
 from tkinter import messagebox
 from PIL import ImageTk, Image
@@ -7,13 +7,15 @@ import customtkinter
 import os
 import sys
 import threading
+
 # import chatbot
-sys.path.append(os.path.abspath('..'))
+sys.path.append(os.path.abspath(".."))
 from Models.collect_letterboxdata import collect_letterboxd_data
 from controller import handle_msg
 
 # basic version with tkinter created using
 # https://medium.com/@vishwanathmuthuraman_92476/building-a-chatbot-with-python-and-tkinter-library-for-the-gui-390a747dadf6
+
 
 # Function: TO-DO connect Letterboxd
 def letterbox_connect():
@@ -33,7 +35,7 @@ def letterbox_connect():
     entry_username = tkinter.Entry(popup_window)
     entry_username.pack()
 
-        # Function to handle when the user clicks the "Submit" button
+    # Function to handle when the user clicks the "Submit" button
     def submit_username():
         username = entry_username.get()
         if username:
@@ -44,7 +46,8 @@ def letterbox_connect():
             text_area.insert(
                 tkinter.END,
                 f"\t Collecting data for Username: '{username}'...",
-                "hang",)
+                "hang",
+            )
             text_area.config(state=DISABLED)
             collect_letterboxd_data(username)
         else:
@@ -53,7 +56,6 @@ def letterbox_connect():
     # Add a button to submit the username
     button_submit = tkinter.Button(popup_window, text="Submit", command=submit_username)
     button_submit.pack()
-
 
 
 ################################################## GUI DEFINITION #############################
@@ -66,7 +68,56 @@ photo = ImageTk.PhotoImage(logo)
 Button(
     root,
     image=photo,
-).grid(row=0, columnspan=2, pady=(10, 0))
+).grid(row=0, columnspan=3, pady=(10, 0))
+
+############################## STREAMING SERVICE BUTTONS #######################
+
+streaming_toggles = {"Amazon Prime": True, "Disney Plus": True, "HBO Max": True, "Hulu": True, "Netflix": True, "Paramount": True} 
+toggle_buttons = [] # this needs to be populated after the buttons are determined
+
+def toggle(btn, label, e_color):
+    streaming_toggles[label] = not streaming_toggles[label]
+    if(streaming_toggles[label]):
+        btn.configure(fg_color=e_color)
+    else: 
+        btn.configure(fg_color="#4a4949")
+    print(streaming_toggles[label])
+
+### toggle button frame 
+bottom_frame = tkinter.Frame(root)
+bottom_frame.grid(row=1,column=0, columnspan=4, pady=(10, 10))
+
+bw = round(650/len(streaming_toggles))
+
+AMAZON_PRIME = "Amazon Prime"
+ap_color = "#007BFF"
+amazon_prime=customtkinter.CTkButton(bottom_frame,text=AMAZON_PRIME, command= lambda: toggle(amazon_prime, AMAZON_PRIME, ap_color), width=bw, corner_radius=0, fg_color=ap_color)
+amazon_prime.grid(row=0, column=0)
+
+DISNEY_PLUS = "Disney Plus"
+dp_color = "#3362CC"
+disney_plus = customtkinter.CTkButton(bottom_frame, text=DISNEY_PLUS, command= lambda: toggle(disney_plus, DISNEY_PLUS, dp_color), width=bw, corner_radius=0, fg_color=dp_color)
+disney_plus.grid(row=0, column=1)
+
+HBO_MAX = "HBO Max"
+hbo_color = "#664A99"
+hbo_max = customtkinter.CTkButton(bottom_frame, text=HBO_MAX, command= lambda: toggle(hbo_max, HBO_MAX, hbo_color), width=bw, corner_radius=0, fg_color=hbo_color)
+hbo_max.grid(row=0, column=2)
+
+HULU = "Hulu"
+hulu_color = "#993166"
+hulu = customtkinter.CTkButton(bottom_frame, text=HULU, command= lambda: toggle(hulu, HULU, hulu_color), width=bw, corner_radius=0, fg_color=hulu_color)
+hulu.grid(row=0, column=3)
+
+NETFLIX = "Netflix"
+n_color = "#CC1933"
+netflix = customtkinter.CTkButton(bottom_frame, text=NETFLIX, command= lambda: toggle(netflix, NETFLIX, n_color), width=bw, corner_radius=0, fg_color=n_color)
+netflix.grid(row=0, column=4)
+
+PARAMOUNT = "Paramount"
+p_color = "#FF0000"
+paramount = customtkinter.CTkButton(bottom_frame, text=PARAMOUNT, command= lambda: toggle(paramount, PARAMOUNT, p_color), width=bw, corner_radius=0, fg_color=p_color)
+paramount.grid(row=0, column=5)
 
 # Scrollbar
 scrollbar = Scrollbar(root, orient="vertical")
@@ -83,46 +134,50 @@ text_area = tkinter.Text(
     font=("Helvetica" + "bold"),
     yscrollcommand=scrollbar.set,
 )
-text_area.grid(row=1, columnspan=3)
+text_area.grid(row=2, columnspan=3)
 text_area.yview_scroll
 
-scrollbar.config(command=text_area.yview)
-scrollbar.grid(row=1, column=3, sticky="ns")
+#scrollbar.config(command=text_area.yview)
+#scrollbar.grid(row=2, column=6, sticky="ns")
 
 # User input field:
 user_field = customtkinter.CTkEntry(root, corner_radius=3, width=325, exportselection=0)
-user_field.grid(row=3, column=1, padx=(10, 10), pady=(10, 10), sticky="news")
+user_field.grid(row=4, column=1, padx=(10, 10), pady=(10, 10), sticky="news")
 user_field.bind("<Return>", (lambda event: send_message()))
 
 # Enter button
-# MUST attribute license 
+# MUST attribute license
 # "https://www.flaticon.com/free-icons/paper-plane by smashicons"
-send = customtkinter.CTkImage(light_image=Image.open("GUI\\images\\plane.png"),
-                              size=(32, 32))
-button = customtkinter.CTkButton(master=root,
-                                 fg_color=("#4995ff", "#4995ff"),  
-                                 image=send,
-                                 text="",
-                                 corner_radius=10,
-                                 width=50,
-                                 height=50,
-                                 command=lambda: send_message()).grid(row=3, column=2, pady=(10, 10), padx=(0,10))
+send = customtkinter.CTkImage(
+    light_image=Image.open("GUI\\images\\plane.png"), size=(32, 32)
+)
+button = customtkinter.CTkButton(
+    master=root,
+    fg_color=("#4995ff", "#4995ff"),
+    image=send,
+    text="",
+    corner_radius=10,
+    width=50,
+    height=50,
+    command=lambda: send_message(),
+).grid(row=4, column=2, pady=(10, 10), padx=(0, 10))
 
 # Letterboxd button
-pic_lib = customtkinter.CTkImage(light_image=Image.open("GUI\\images\\lb.png"), 
-                            size=(114, 50))
+pic_lib = customtkinter.CTkImage(
+    light_image=Image.open("GUI\\images\\lb.png"), size=(114, 50)
+)
 lb_button = customtkinter.CTkButton(
     root,
     text="",
     image=pic_lib,
     compound=BOTTOM,
     command=lambda: letterbox_connect(),
-    width= 114, 
+    width=114,
     height=50,
-    corner_radius= 0,
-    fg_color= 'black',
-    hover_color = '#6e6e6e'
-).grid(row=3, column=0, pady=(10, 10), padx=(10,0))
+    corner_radius=0,
+    fg_color="black",
+    hover_color="#6e6e6e",
+).grid(row=4, column=0, pady=(10, 10), padx=(10, 0))
 
 # text config for chat labels
 text_area.tag_configure(
@@ -145,35 +200,53 @@ text_area.config(spacing2=5)
 text_area.config(spacing3=5)
 
 # Displaying greeting/loading text
-#loading_message()
+# loading_message()
 
 # Displaying button
 text_area.window_create(END, window=lb_button, padx=200, pady=20)
 text_area.config(state=DISABLED)
 
-# open at the center of the screen 
-root.eval('tk::PlaceWindow . center')
-root.configure(fg_color='#303030')
+# open at the center of the screen
+root.eval("tk::PlaceWindow . center")
+root.configure(fg_color="#303030")
+
+w = 650 # width for the Tk root
+h = 700
+# get screen width and height
+ws = root.winfo_screenwidth() # width of the screen
+hs = root.winfo_screenheight() # height of the screen
+
+# calculate x and y coordinates for the Tk root window
+x = (ws/2) - (w/2)
+y = (hs/2) - (h/2)
+
+# set the dimensions of the screen 
+# and where it is placed
+root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+
 
 ###################################### TKINTER FUNCTIONS #########################################
 def get_root():
-    return root 
+    return root
+
 
 # Function: given a user's inputted plot description and preferred genre, respond a certain way
 def chat_response(user_input):
     # Normalize the user's input
     user_input = user_input.lower()
-    response = handle_msg(user_input)
+    streaming = [s for s in streaming_toggles.keys() if streaming_toggles[s]]
+    response = handle_msg(user_input, streaming)
 
     return response
+
 
 def loading_message(_):
     text_area.config(state=NORMAL)
     text_area.insert(tkinter.END, f"\n   ")
-    text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+    # text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
     text_area.insert(
         tkinter.END,
-        f"\t One second, data is still loading...",
+        f"\t One second, data is still loading...\n",
         "hang",
     )
     text_area.config(state=DISABLED)
@@ -187,9 +260,9 @@ def greeting_message(_):
     text_area.insert(
         tkinter.END,
         f"\t Hi! Welcome to the FLIX Rec Movie Recommendation Engine.\n"
-        + f"Please enter a short plot description of a movie you would like to see, "
-        + f"along with preferred genre, "
-        + f"or click the button below to connect your Letterboxd for a personalized recommendation!",
+        + f"Please enter a short plot description of a movie you would like to see "
+        + f"or your preferred genre, "
+        + f"or click the button below to connect your Letterboxd for a personalized recommendation!\n",
         "hang",
     )
     text_area.config(state=DISABLED)
@@ -213,26 +286,29 @@ def send_message():
     text_area.insert(tkinter.END, f"      User:     ", "boldtextuser")
     text_area.insert(
         tkinter.END,
-        f"\t {user_input}\n",
+        f"\t {user_input}\n\n",
         "hang",
     )
     text_area.insert(tkinter.END, f"   ")
     text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-    text_area.insert(tkinter.END, f"\t {response}\n", "hang")
+    text_area.insert(tkinter.END, f"\t {response}\n\n", "hang")
     # text_area.insert(
     #     tkinter.END, f"\nFeel free to ask for another recommendation!\n\n", "hang"
     # )
     text_area.config(state=DISABLED)
     text_area.see(tkinter.END)
 
+
 def doFoo(*args):
     print("Hello, world")
+
 
 ############################# EVENTS TO BE CALLED FROM MAIN ####################
 
 root.bind("<<loading>>", loading_message)
 root.bind("<<greet>>", greeting_message)
 
+
 ############################## run func #########################################
-def run(): 
+def run():
     root.mainloop()

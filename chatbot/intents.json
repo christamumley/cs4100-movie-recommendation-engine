@@ -11,8 +11,7 @@
       "What's up",
       "how are ya",
       "heyy",
-      "whatsup",
-      "??? ??? ??"
+      "whatsup"
    ],
    "responses": [
       "Hello!",
@@ -40,8 +39,7 @@
    "responses": [
       "Talk to you later",
       "Goodbye!",
-      "Come back soon",
-      "Tell me how it goes!"
+      "Happy Watching!"
    ],
    "context_set": ""
 },
@@ -66,7 +64,7 @@
       "who designed you"
    ],
    "responses": [
-      "College students"
+      "This bot was made by Gauri, Smita, Thanoshi, and Christa"
    ],
    "context_set": ""
 },
@@ -84,7 +82,7 @@
       "who are you",
       "who is this",
       "what am i chatting to",
-      "who am i taking to",
+      "who am i talking to",
       "what are you"
    ],
    "responses": [
@@ -108,7 +106,7 @@
       "I want a __ movie"
    ],
    "responses": [
-      "What sort of plot/ mood are you looking for? Give me a short summary."
+      "[Recommended movie]"
    ],
    "context_set": ""
 },
@@ -126,7 +124,7 @@
       "sort of like"
    ],
    "responses": [
-      "Coming right up!"
+      "[Recommended movie]"
    ],
    "context_set": ""
 },
@@ -146,17 +144,6 @@
    ],
    "responses": [
       "[Recommended movie]"
-   ],
-   "context_set": ""
-},
- {
-   "tag": "letterboxd",
-   "patterns": [
-      "can I give you my letterboxd",
-      "letterboxd"
-   ],
-   "responses": [
-      "Sure thing. Provide me the username, please."
    ],
    "context_set": ""
 },
@@ -185,7 +172,7 @@
    "context_set": ""
 },
  {
-   "tag": "salutaion",
+   "tag": "salutation",
    "patterns": [
       "okk",
       "okie",
@@ -203,7 +190,7 @@
    ],
    "responses": [
       "I am glad I helped you",
-      "welcome, anything else i can assist you with?"
+      "Welcome, anything else I can assist you with?"
    ],
    "context_set": ""
 },
@@ -219,7 +206,7 @@
    ],
    "responses": [
       "I can answer movie recommendation questions!",
-      "You can ask me questions regarding movies, and i will try to answer them"
+      "You can ask me questions regarding movies, and I will try to answer them"
    ],
    "context_set": ""
 }

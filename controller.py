@@ -1,22 +1,30 @@
 import os
 import sys
 import threading
+import numpy as np
 
-# chatbot implementatipon 
-from chatbot.moviebot import get_label
-# movie model implmentation 
-from Models.movie_models import recommend_movies_based_on_input_plot
+# chatbot implementatipon
+from chatbot.moviebot import get_label, get_default_responses
 
+# movie model implmentation
+from Models.movie_models import (
+    recommend_movies_based_on_input_plot,
+    recommend_movies_based_on_genre,
+    recommend_movies_based_on_similarity,
+)
 
-
-
-##########################################
-#    NEEDS to be implemented
-##########################################
-
-def handle_msg(msg): 
-    label = get_label(msg) 
-    if(label == "plot"):
-        return recommend_movies_based_on_input_plot(msg)
+def handle_msg(msg, streaming):
+    print("streaming: ", streaming)
+    label = get_label(msg)
+    if label == "plot":
+        return recommend_movies_based_on_input_plot(msg, streaming)
+    elif label == "genre":
+        return recommend_movies_based_on_genre(msg, streaming)
+    elif label == "similar":
+        return recommend_movies_based_on_similarity(msg).to_string(index=False)
     else:
-        return label 
+        responses = get_default_responses() 
+        if(label in responses.keys()):
+            return np.random.choice(responses[label])
+        else: 
+            return "Sorry, I'm not sure I understand what you're looking for. Could you reword that?"
