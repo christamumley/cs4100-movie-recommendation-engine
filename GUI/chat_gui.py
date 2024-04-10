@@ -8,9 +8,10 @@ import os
 import sys
 import threading
 
+from Models.newlb_model import rec_letterbox
+
 # import chatbot
 sys.path.append(os.path.abspath(".."))
-from Models.collect_letterboxdata import collect_letterboxd_data
 from controller import handle_msg
 
 # basic version with tkinter created using
@@ -19,23 +20,37 @@ from controller import handle_msg
 
 # Function: TO-DO connect Letterboxd
 def letterbox_connect():
+    global lb_button
     popup_window = tkinter.Toplevel(root)
     popup_window.title("Connect Letterboxd")
 
-    icon = Image.open("GUI\\images\\foldericon.jpg").resize((250, 200))
+
+    popup_width = 450
+    popup_height = 400
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width - popup_width) // 2
+    y = (screen_height - popup_height) // 2
+    popup_window.geometry(f"{popup_width}x{popup_height}+{x}+{y}")
+
+
+    icon = Image.open("GUI\\images\\foldericon.jpg").resize((350, 310))
     folder_icon = ImageTk.PhotoImage(icon)
     label_icon = tkinter.Label(popup_window, image=folder_icon)
     label_icon.image = folder_icon  # Keep a reference to the image
-    label_icon.pack()
+    label_icon.pack(pady=10)
+
 
     label_username = tkinter.Label(popup_window, text="Enter your username:")
     label_username.pack()
 
+
     # Add an entry widget for the user to input their username
-    entry_username = tkinter.Entry(popup_window)
+    entry_username = tkinter.Entry(popup_window, width = 40, font=("Arial", 12))
     entry_username.pack()
 
-    # Function to handle when the user clicks the "Submit" button
+
+        # Function to handle when the user clicks the "Submit" button
     def submit_username():
         username = entry_username.get()
         if username:
@@ -46,13 +61,34 @@ def letterbox_connect():
             text_area.insert(
                 tkinter.END,
                 f"\t Collecting data for Username: '{username}'...",
+                "hang",)
+            text_area.config(state=DISABLED)
+            root.update()  # Update the GUI to show changes immediately
+            try:
+                movies = rec_letterbox(username)
+            except Exception as e:
+                messagebox.showerror("Error", f"This Username is not valid: {str(e)}")
+                root.update()  # Update the GUI to show changes immediately
+            genres= list(movies.keys())   
+            
+
+            text_area.config(state=NORMAL)
+            text_area.insert(tkinter.END, f"\n   ")
+            text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+            text_area.insert(
+                tkinter.END,
+                f"\t Here are your personalized movie recs according to your letterboxd: \n"
+                + f"'{genres[0]}': '{movies[genres[0]][0]}'... Description: '{movies[genres[0]][1]}' \n"
+                + f"'{genres[1]}': '{movies[genres[1]][0]}'... Description: '{movies[genres[0]][1]}' \n "
+                + f"'{genres[2]}': '{movies[genres[2]][0]}'... Description: '{movies[genres[0]][1]}' \n",
                 "hang",
             )
             text_area.config(state=DISABLED)
-            collect_letterboxd_data(username)
+            root.update()  # Update the GUI to show changes immediately
         else:
             messagebox.showerror("Error", "Please enter a username.")
-
+           
+   
     # Add a button to submit the username
     button_submit = tkinter.Button(popup_window, text="Submit", command=submit_username)
     button_submit.pack()

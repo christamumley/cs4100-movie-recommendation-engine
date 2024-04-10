@@ -1,4 +1,4 @@
-from letterboxd import get_watched, get_movie_genres, count_items, corresponding_themes
+from Models.letterboxd import get_watched, get_movie_genres, count_items, corresponding_themes
 import pandas as pd
 from sklearn.feature_extraction.text import TfidfVectorizer
 from sklearn.metrics.pairwise import cosine_similarity

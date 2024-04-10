@@ -7,7 +7,7 @@ from nltk.stem import WordNetLemmatizer
 from sklearn.metrics.pairwise import cosine_similarity
 
 
-from collect_letterboxdata import collect_letterboxd_data
+from Models.collect_letterboxdata import collect_letterboxd_data
 
 genre_file_path = 'Datasets/letterboxd_data/genres.csv'
 themes_file_path = 'Datasets/letterboxd_data/themes.csv'
