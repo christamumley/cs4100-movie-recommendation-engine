@@ -2,31 +2,20 @@ from collections import Counter
 import requests
 from bs4 import BeautifulSoup
 
+
 def get_watched(username):
     # get html 
-    url = f'https://letterboxd.com/{username}/likes/films/'
-    response = requests.get(url)
-    soup = BeautifulSoup(response.text, 'html.parser')
+    try:
+        url = f'https://letterboxd.com/{username}/likes/films/'
+        response = requests.get(url)
+        soup = BeautifulSoup(response.text, 'html.parser')
+    except Exception as e:
+        return e
+    
 
     images = soup.find_all(class_='image')
     movies = [image.get('alt') for image in images]
 
-    '''
-    Code if you want to get all the movies from all the pages
-    pagination = soup.find('div', class_='paginate-pages')
-    last_page_link = pagination.find_all('a')[-1] if pagination else None    
-    all_movies = []
-    
-    # Extract the last page number
-    num_pages = int(last_page_link.text) if last_page_link else 1
-
-    for i in range(num_pages):
-        url = f'https://letterboxd.com/{username}/likes/films/page/{i+1}/'
-        response = requests.get(url)
-        soup = BeautifulSoup(response.text, 'html.parser')
-        images = soup.find_all(class_='image')
-        movies = [image.get('alt') for image in images]
-        all_movies.extend(movies)'''
 
     return movies 
 
