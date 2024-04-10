@@ -13,12 +13,13 @@ from Models.movie_models import (
     recommend_movies_based_on_similarity,
 )
 
-def handle_msg(msg):
+def handle_msg(msg, streaming):
+    print("streaming: ", streaming)
     label = get_label(msg)
     if label == "plot":
-        return recommend_movies_based_on_input_plot(msg)
+        return recommend_movies_based_on_input_plot(msg, streaming)
     elif label == "genre":
-        return recommend_movies_based_on_genre(msg)
+        return recommend_movies_based_on_genre(msg, streaming)
     elif label == "similar":
         return recommend_movies_based_on_similarity(msg).to_string(index=False)
     else:

@@ -32,21 +32,27 @@ def get_keywords(plot):
     keywords = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     return [k[0] for k in keywords]
 
-def recommend_movies_based_on_input_plot(input_plot):
-
-    plot_keywords = get_keywords(input_plot)
+def recommend_movies_based_on_input_plot(input_plot, streaming):
 
     input_vec = tfidf_vectorizer.transform([input_plot])
-    cosine_sim = cosine_similarity(input_vec, tfidf_matrix_summaries)
-    sim_scores = list(enumerate(cosine_sim[0]))
-    sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-    sim_scores = sim_scores[1:11]
-    movie_indices = [i[0] for i in sim_scores]
-    movies_list = list(movies_data_cleaned["title"].iloc[movie_indices])[:3]
-    response_str = f"I would recommend you check out {', '.join(movies_list[:2])} and {movies_list[-1]}"
-    return response_str
 
-def recommend_movies_based_on_genre(input_genre):
+    filtered_movies = movies_data_cleaned['service'].apply(lambda s: s in streaming)
+    filtered_movies_data = movies_data_cleaned[filtered_movies]
+
+    if not filtered_movies_data.empty:
+        filtered_tfidf_matrix = tfidf_matrix_summaries[filtered_movies_data.index]
+        cosine_sim = cosine_similarity(input_vec, filtered_tfidf_matrix)
+        sim_scores = list(enumerate(cosine_sim[0]))
+        sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
+        sim_scores = sim_scores[1:5]
+        movie_indices = [i[0] for i in sim_scores]
+        
+        recommend_movie = np.random.choice(list(movies_data_cleaned["title"].iloc[movie_indices]))
+        response_str = f"I would recommend you check out {recommend_movie}"
+        return response_str
+
+
+def recommend_movies_based_on_genre(input_genre, streaming):
     genre_keywords = get_keywords(input_genre)
     input_vec = tfidf_vectorizer.transform([input_genre])
 
@@ -66,15 +72,18 @@ def recommend_movies_based_on_genre(input_genre):
     filtered_movies = movies_data_cleaned[genre_columns].apply(lambda x: x.str.contains(genre_det, case=False, na=False)).any(axis=1)
     filtered_movies_data = movies_data_cleaned[filtered_movies]
 
+    filtered_movies = filtered_movies_data['service'].apply(lambda s: s in streaming)
+    filtered_movies_data = filtered_movies_data[filtered_movies]
+
     recommend_movie = ""
     if not filtered_movies_data.empty:
         filtered_tfidf_matrix = tfidf_matrix_summaries[filtered_movies_data.index]
         cosine_sim = cosine_similarity(input_vec, filtered_tfidf_matrix)
         sim_scores = list(enumerate(cosine_sim[0]))
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
-        sim_scores = sim_scores[1:11]
+        sim_scores = sim_scores[1:5]
         movie_indices = [i[0] for i in sim_scores]
-        recommend_movie = np.random.choice(list(movies_data_cleaned["title"].iloc[movie_indices])[:10])
+        recommend_movie = np.random.choice(list(movies_data_cleaned["title"].iloc[movie_indices]))
     else:
         return "No movies found in the preferred genre :("
     
