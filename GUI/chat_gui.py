@@ -24,7 +24,6 @@ def letterbox_connect():
     popup_window = tkinter.Toplevel(root)
     popup_window.title("Connect Letterboxd")
 
-
     popup_width = 450
     popup_height = 400
     screen_width = root.winfo_screenwidth()
@@ -33,24 +32,20 @@ def letterbox_connect():
     y = (screen_height - popup_height) // 2
     popup_window.geometry(f"{popup_width}x{popup_height}+{x}+{y}")
 
-
     icon = Image.open("GUI\\images\\foldericon.jpg").resize((350, 310))
     folder_icon = ImageTk.PhotoImage(icon)
     label_icon = tkinter.Label(popup_window, image=folder_icon)
     label_icon.image = folder_icon  # Keep a reference to the image
     label_icon.pack(pady=10)
 
-
     label_username = tkinter.Label(popup_window, text="Enter your username:")
     label_username.pack()
 
-
     # Add an entry widget for the user to input their username
-    entry_username = tkinter.Entry(popup_window, width = 40, font=("Arial", 12))
+    entry_username = tkinter.Entry(popup_window, width=40, font=("Arial", 12))
     entry_username.pack()
 
-
-        # Function to handle when the user clicks the "Submit" button
+    # Function to handle when the user clicks the "Submit" button
     def submit_username():
         username = entry_username.get()
         if username:
@@ -61,7 +56,8 @@ def letterbox_connect():
             text_area.insert(
                 tkinter.END,
                 f"\t Collecting data for Username: '{username}'...",
-                "hang",)
+                "hang",
+            )
             text_area.config(state=DISABLED)
             root.update()  # Update the GUI to show changes immediately
             try:
@@ -69,8 +65,7 @@ def letterbox_connect():
             except Exception as e:
                 messagebox.showerror("Error", f"This Username is not valid: {str(e)}")
                 root.update()  # Update the GUI to show changes immediately
-            genres= list(movies.keys())   
-            
+            genres = list(movies.keys())
 
             text_area.config(state=NORMAL)
             text_area.insert(tkinter.END, f"\n   ")
@@ -79,16 +74,15 @@ def letterbox_connect():
                 tkinter.END,
                 f"\t Here are your personalized movie recs according to your letterboxd: \n"
                 + f"'{genres[0]}': '{movies[genres[0]][0]}'... Description: '{movies[genres[0]][1]}' \n"
-                + f"'{genres[1]}': '{movies[genres[1]][0]}'... Description: '{movies[genres[0]][1]}' \n "
-                + f"'{genres[2]}': '{movies[genres[2]][0]}'... Description: '{movies[genres[0]][1]}' \n",
+                + f"'{genres[1]}': '{movies[genres[1]][0]}'... Description: '{movies[genres[1]][1]}' \n "
+                + f"'{genres[2]}': '{movies[genres[2]][0]}'... Description: '{movies[genres[2]][1]}' \n",
                 "hang",
             )
             text_area.config(state=DISABLED)
             root.update()  # Update the GUI to show changes immediately
         else:
             messagebox.showerror("Error", "Please enter a username.")
-           
-   
+
     # Add a button to submit the username
     button_submit = tkinter.Button(popup_window, text="Submit", command=submit_username)
     button_submit.pack()
@@ -108,51 +102,102 @@ Button(
 
 ############################## STREAMING SERVICE BUTTONS #######################
 
-streaming_toggles = {"Amazon Prime": True, "Disney Plus": True, "HBO Max": True, "Hulu": True, "Netflix": True, "Paramount": True} 
-toggle_buttons = [] # this needs to be populated after the buttons are determined
+streaming_toggles = {
+    "Amazon Prime": True,
+    "Disney Plus": True,
+    "HBO Max": True,
+    "Hulu": True,
+    "Netflix": True,
+    "Paramount": True,
+}
+toggle_buttons = []  # this needs to be populated after the buttons are determined
+
 
 def toggle(btn, label, e_color):
     streaming_toggles[label] = not streaming_toggles[label]
-    if(streaming_toggles[label]):
+    if streaming_toggles[label]:
         btn.configure(fg_color=e_color)
-    else: 
+    else:
         btn.configure(fg_color="#4a4949")
     print(streaming_toggles[label])
 
-### toggle button frame 
-bottom_frame = tkinter.Frame(root)
-bottom_frame.grid(row=1,column=0, columnspan=4, pady=(10, 10))
 
-bw = round(650/len(streaming_toggles))
+### toggle button frame
+bottom_frame = tkinter.Frame(root)
+bottom_frame.grid(row=1, column=0, columnspan=4, pady=(10, 10))
+
+bw = round(650 / len(streaming_toggles))
 
 AMAZON_PRIME = "Amazon Prime"
 ap_color = "#007BFF"
-amazon_prime=customtkinter.CTkButton(bottom_frame,text=AMAZON_PRIME, command= lambda: toggle(amazon_prime, AMAZON_PRIME, ap_color), width=bw, corner_radius=0, fg_color=ap_color)
+amazon_prime = customtkinter.CTkButton(
+    bottom_frame,
+    text=AMAZON_PRIME,
+    command=lambda: toggle(amazon_prime, AMAZON_PRIME, ap_color),
+    width=bw,
+    corner_radius=0,
+    fg_color=ap_color,
+)
 amazon_prime.grid(row=0, column=0)
 
 DISNEY_PLUS = "Disney Plus"
 dp_color = "#3362CC"
-disney_plus = customtkinter.CTkButton(bottom_frame, text=DISNEY_PLUS, command= lambda: toggle(disney_plus, DISNEY_PLUS, dp_color), width=bw, corner_radius=0, fg_color=dp_color)
+disney_plus = customtkinter.CTkButton(
+    bottom_frame,
+    text=DISNEY_PLUS,
+    command=lambda: toggle(disney_plus, DISNEY_PLUS, dp_color),
+    width=bw,
+    corner_radius=0,
+    fg_color=dp_color,
+)
 disney_plus.grid(row=0, column=1)
 
 HBO_MAX = "HBO Max"
 hbo_color = "#664A99"
-hbo_max = customtkinter.CTkButton(bottom_frame, text=HBO_MAX, command= lambda: toggle(hbo_max, HBO_MAX, hbo_color), width=bw, corner_radius=0, fg_color=hbo_color)
+hbo_max = customtkinter.CTkButton(
+    bottom_frame,
+    text=HBO_MAX,
+    command=lambda: toggle(hbo_max, HBO_MAX, hbo_color),
+    width=bw,
+    corner_radius=0,
+    fg_color=hbo_color,
+)
 hbo_max.grid(row=0, column=2)
 
 HULU = "Hulu"
 hulu_color = "#993166"
-hulu = customtkinter.CTkButton(bottom_frame, text=HULU, command= lambda: toggle(hulu, HULU, hulu_color), width=bw, corner_radius=0, fg_color=hulu_color)
+hulu = customtkinter.CTkButton(
+    bottom_frame,
+    text=HULU,
+    command=lambda: toggle(hulu, HULU, hulu_color),
+    width=bw,
+    corner_radius=0,
+    fg_color=hulu_color,
+)
 hulu.grid(row=0, column=3)
 
 NETFLIX = "Netflix"
 n_color = "#CC1933"
-netflix = customtkinter.CTkButton(bottom_frame, text=NETFLIX, command= lambda: toggle(netflix, NETFLIX, n_color), width=bw, corner_radius=0, fg_color=n_color)
+netflix = customtkinter.CTkButton(
+    bottom_frame,
+    text=NETFLIX,
+    command=lambda: toggle(netflix, NETFLIX, n_color),
+    width=bw,
+    corner_radius=0,
+    fg_color=n_color,
+)
 netflix.grid(row=0, column=4)
 
 PARAMOUNT = "Paramount"
 p_color = "#FF0000"
-paramount = customtkinter.CTkButton(bottom_frame, text=PARAMOUNT, command= lambda: toggle(paramount, PARAMOUNT, p_color), width=bw, corner_radius=0, fg_color=p_color)
+paramount = customtkinter.CTkButton(
+    bottom_frame,
+    text=PARAMOUNT,
+    command=lambda: toggle(paramount, PARAMOUNT, p_color),
+    width=bw,
+    corner_radius=0,
+    fg_color=p_color,
+)
 paramount.grid(row=0, column=5)
 
 # Scrollbar
@@ -173,8 +218,8 @@ text_area = tkinter.Text(
 text_area.grid(row=2, columnspan=3)
 text_area.yview_scroll
 
-#scrollbar.config(command=text_area.yview)
-#scrollbar.grid(row=2, column=6, sticky="ns")
+# scrollbar.config(command=text_area.yview)
+# scrollbar.grid(row=2, column=6, sticky="ns")
 
 # User input field:
 user_field = customtkinter.CTkEntry(root, corner_radius=3, width=325, exportselection=0)
@@ -246,19 +291,19 @@ text_area.config(state=DISABLED)
 root.eval("tk::PlaceWindow . center")
 root.configure(fg_color="#303030")
 
-w = 650 # width for the Tk root
+w = 650  # width for the Tk root
 h = 700
 # get screen width and height
-ws = root.winfo_screenwidth() # width of the screen
-hs = root.winfo_screenheight() # height of the screen
+ws = root.winfo_screenwidth()  # width of the screen
+hs = root.winfo_screenheight()  # height of the screen
 
 # calculate x and y coordinates for the Tk root window
-x = (ws/2) - (w/2)
-y = (hs/2) - (h/2)
+x = (ws / 2) - (w / 2)
+y = (hs / 2) - (h / 2)
 
-# set the dimensions of the screen 
+# set the dimensions of the screen
 # and where it is placed
-root.geometry('%dx%d+%d+%d' % (w, h, x, y))
+root.geometry("%dx%d+%d+%d" % (w, h, x, y))
 
 
 ###################################### TKINTER FUNCTIONS #########################################
