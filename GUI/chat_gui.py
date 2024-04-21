@@ -1,3 +1,10 @@
+"""Final GUI for Chatbot
+
+    Sets up and displays the graphical UI for the Chatbot.
+    Uses customtkinter - to allow for consistency over systems (Windows vs. MacOS)
+    
+"""
+
 import tkinter
 from tkinter import *
 from tkinter import messagebox
@@ -6,7 +13,6 @@ import customtkinter
 
 import os
 import sys
-import threading
 
 from Models.newlb_model import rec_letterbox
 
@@ -18,90 +24,118 @@ from controller import handle_msg
 # https://medium.com/@vishwanathmuthuraman_92476/building-a-chatbot-with-python-and-tkinter-library-for-the-gui-390a747dadf6
 
 
-# Function: TO-DO connect Letterboxd
-def letterbox_connect():
-    global lb_button
-    popup_window = tkinter.Toplevel(root)
-    popup_window.title("Connect Letterboxd")
-
-    popup_width = 450
-    popup_height = 400
-    screen_width = root.winfo_screenwidth()
-    screen_height = root.winfo_screenheight()
-    x = (screen_width - popup_width) // 2
-    y = (screen_height - popup_height) // 2
-    popup_window.geometry(f"{popup_width}x{popup_height}+{x}+{y}")
-
-    icon = Image.open("GUI\\images\\foldericon.jpg").resize((350, 310))
-    folder_icon = ImageTk.PhotoImage(icon)
-    label_icon = tkinter.Label(popup_window, image=folder_icon)
-    label_icon.image = folder_icon  # Keep a reference to the image
-    label_icon.pack(pady=10)
-
-    label_username = tkinter.Label(popup_window, text="Enter your username:")
-    label_username.pack()
-
-    # Add an entry widget for the user to input their username
-    entry_username = tkinter.Entry(popup_window, width=40, font=("Arial", 12))
-    entry_username.pack()
-
-    # Function to handle when the user clicks the "Submit" button
-    def submit_username():
-        username = entry_username.get()
-        if username:
-            popup_window.destroy()
-            text_area.config(state=NORMAL)
-            text_area.insert(tkinter.END, f"\n   ")
-            text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-            text_area.insert(
-                tkinter.END,
-                f"\t Collecting data for Username: '{username}'...",
-                "hang",
-            )
-            text_area.config(state=DISABLED)
-            root.update()  # Update the GUI to show changes immediately
-            try:
-                movies = rec_letterbox(username)
-            except Exception as e:
-                messagebox.showerror("Error", f"This Username is not valid: {str(e)}")
-                root.update()  # Update the GUI to show changes immediately
-            genres = list(movies.keys())
-
-            text_area.config(state=NORMAL)
-            text_area.insert(tkinter.END, f"\n   ")
-            text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
-            text_area.insert(
-                tkinter.END,
-                f"\t Here are your personalized movie recs according to your letterboxd: \n"
-                + f"'{genres[0]}': '{movies[genres[0]][0]}'... Description: '{movies[genres[0]][1]}' \n"
-                + f"'{genres[1]}': '{movies[genres[1]][0]}'... Description: '{movies[genres[1]][1]}' \n "
-                + f"'{genres[2]}': '{movies[genres[2]][0]}'... Description: '{movies[genres[2]][1]}' \n",
-                "hang",
-            )
-            text_area.config(state=DISABLED)
-            root.update()  # Update the GUI to show changes immediately
-        else:
-            messagebox.showerror("Error", "Please enter a username.")
-
-    # Add a button to submit the username
-    button_submit = tkinter.Button(popup_window, text="Submit", command=submit_username)
-    button_submit.pack()
-
-
-################################################## GUI DEFINITION #############################
+##################################### GENERAL GUI DEFINITION #############################
 root = customtkinter.CTk()
 root.title("Movie Recommendation Chatbot")
 
 # Logo
-logo = Image.open("GUI\\images\\logo.jpeg").resize((300, 100))
+logo = Image.open("GUI/images/logo.jpeg").resize((300, 100))
 photo = ImageTk.PhotoImage(logo)
 Button(
     root,
     image=photo,
 ).grid(row=0, columnspan=3, pady=(10, 0))
 
-############################## STREAMING SERVICE BUTTONS #######################
+# Scrollbar
+scrollbar = Scrollbar(root, orient="vertical")
 
+# Chat text area
+text_area = tkinter.Text(
+    root,
+    bg="white",
+    fg="black",
+    width=82,
+    height=20,
+    wrap="word",
+    relief=FLAT,
+    font=("Helvetica" + "bold"),
+    yscrollcommand=scrollbar.set,
+)
+text_area.grid(row=2, columnspan=3)
+text_area.yview_scroll
+
+# User input field
+user_field = customtkinter.CTkEntry(root, corner_radius=3, width=325, exportselection=0)
+user_field.grid(row=4, column=1, padx=(10, 10), pady=(10, 10), sticky="news")
+user_field.bind("<Return>", (lambda event: send_message()))
+
+# Enter button
+# MUST attribute license
+# "https://www.flaticon.com/free-icons/paper-plane by smashicons"
+send = customtkinter.CTkImage(
+    light_image=Image.open("GUI/images/plane.png"), size=(32, 32)
+)
+button = customtkinter.CTkButton(
+    master=root,
+    fg_color=("#4995ff", "#4995ff"),
+    image=send,
+    text="",
+    corner_radius=10,
+    width=50,
+    height=50,
+    command=lambda: send_message(),
+).grid(row=4, column=2, pady=(10, 10), padx=(0, 10))
+
+# Letterboxd button
+pic_lib = customtkinter.CTkImage(
+    light_image=Image.open("GUI/images/lb.png"), size=(114, 50)
+)
+lb_button = customtkinter.CTkButton(
+    root,
+    text="",
+    image=pic_lib,
+    compound=BOTTOM,
+    command=lambda: letterbox_connect(),
+    width=114,
+    height=50,
+    corner_radius=0,
+    fg_color="black",
+    hover_color="#6e6e6e",
+).grid(row=4, column=0, pady=(10, 10), padx=(10, 0))
+
+# text config for chat labels
+text_area.tag_configure(
+    "boldtextuser",
+    background="#4995ff",
+    font=("Helvetica" + "bold"),
+    foreground="white",
+)
+text_area.tag_configure(
+    "boldtextbot",
+    background="#d30000",
+    font=("Helvetica" + "bold"),
+    foreground="white",
+)
+
+# text config for chat content
+text_area.tag_configure("hang", lmargin1=106, lmargin2=106, rmargin=20)
+text_area.config(spacing1=5)
+text_area.config(spacing2=5)
+text_area.config(spacing3=5)
+
+# Displaying Letterboxd button
+text_area.window_create(END, window=lb_button, padx=200, pady=20)
+text_area.config(state=DISABLED)
+
+# open at the center of the screen
+root.eval("tk::PlaceWindow . center")
+root.configure(fg_color="#303030")
+
+w = 750  # width for the Tk root
+h = 1000
+# get screen width and height
+ws = root.winfo_screenwidth()  # width of the screen
+hs = root.winfo_screenheight()  # height of the screen
+
+# calculate x and y coordinates for the Tk root window
+x = (ws / 2) - (w / 2)
+y = (hs / 2) - (h / 2)
+
+# set the dimensions of the screen
+# and where it is placed
+root.geometry("%dx%d+%d+%d" % (w, h, x, y))
+
+############################## STREAMING SERVICE BUTTONS #######################
 streaming_toggles = {
     "Amazon Prime": True,
     "Disney Plus": True,
@@ -122,9 +156,9 @@ def toggle(btn, label, e_color):
     print(streaming_toggles[label])
 
 
-### toggle button frame
+# toggle button frame
 bottom_frame = tkinter.Frame(root)
-bottom_frame.grid(row=1, column=0, columnspan=4, pady=(10, 10))
+bottom_frame.grid(row=1, column=0, columnspan=3, pady=(10, 10))
 
 bw = round(650 / len(streaming_toggles))
 
@@ -200,110 +234,79 @@ paramount = customtkinter.CTkButton(
 )
 paramount.grid(row=0, column=5)
 
-# Scrollbar
-scrollbar = Scrollbar(root, orient="vertical")
 
-# Chat text area
-text_area = tkinter.Text(
-    root,
-    bg="white",
-    fg="black",
-    width=82,
-    height=20,
-    wrap="word",
-    relief=FLAT,
-    font=("Helvetica" + "bold"),
-    yscrollcommand=scrollbar.set,
-)
-text_area.grid(row=2, columnspan=3)
-text_area.yview_scroll
+###################################### LETTERBOXD CONNECTION #############################
+def letterbox_connect():
+    """Connects Letterboxd to Chatbot"""
 
-# scrollbar.config(command=text_area.yview)
-# scrollbar.grid(row=2, column=6, sticky="ns")
+    global lb_button
+    popup_window = tkinter.Toplevel(root)
+    popup_window.title("Connect Letterboxd")
 
-# User input field:
-user_field = customtkinter.CTkEntry(root, corner_radius=3, width=325, exportselection=0)
-user_field.grid(row=4, column=1, padx=(10, 10), pady=(10, 10), sticky="news")
-user_field.bind("<Return>", (lambda event: send_message()))
+    popup_width = 450
+    popup_height = 400
+    screen_width = root.winfo_screenwidth()
+    screen_height = root.winfo_screenheight()
+    x = (screen_width - popup_width) // 2
+    y = (screen_height - popup_height) // 2
+    popup_window.geometry(f"{popup_width}x{popup_height}+{x}+{y}")
 
-# Enter button
-# MUST attribute license
-# "https://www.flaticon.com/free-icons/paper-plane by smashicons"
-send = customtkinter.CTkImage(
-    light_image=Image.open("GUI\\images\\plane.png"), size=(32, 32)
-)
-button = customtkinter.CTkButton(
-    master=root,
-    fg_color=("#4995ff", "#4995ff"),
-    image=send,
-    text="",
-    corner_radius=10,
-    width=50,
-    height=50,
-    command=lambda: send_message(),
-).grid(row=4, column=2, pady=(10, 10), padx=(0, 10))
+    icon = Image.open("GUI/images/foldericon.jpg").resize((350, 310))
+    folder_icon = ImageTk.PhotoImage(icon)
+    label_icon = tkinter.Label(popup_window, image=folder_icon)
+    label_icon.image = folder_icon  # Keep a reference to the image
+    label_icon.pack(pady=10)
 
-# Letterboxd button
-pic_lib = customtkinter.CTkImage(
-    light_image=Image.open("GUI\\images\\lb.png"), size=(114, 50)
-)
-lb_button = customtkinter.CTkButton(
-    root,
-    text="",
-    image=pic_lib,
-    compound=BOTTOM,
-    command=lambda: letterbox_connect(),
-    width=114,
-    height=50,
-    corner_radius=0,
-    fg_color="black",
-    hover_color="#6e6e6e",
-).grid(row=4, column=0, pady=(10, 10), padx=(10, 0))
+    label_username = tkinter.Label(popup_window, text="Enter your username:")
+    label_username.pack()
 
-# text config for chat labels
-text_area.tag_configure(
-    "boldtextuser",
-    background="#4995ff",
-    font=("Helvetica" + "bold"),
-    foreground="white",
-)
-text_area.tag_configure(
-    "boldtextbot",
-    background="#d30000",
-    font=("Helvetica" + "bold"),
-    foreground="white",
-)
+    # Add an entry widget for the user to input their username
+    entry_username = tkinter.Entry(popup_window, width=40, font=("Arial", 12))
+    entry_username.pack()
 
-# text config for chat content
-text_area.tag_configure("hang", lmargin1=106, lmargin2=106, rmargin=20)
-text_area.config(spacing1=5)
-text_area.config(spacing2=5)
-text_area.config(spacing3=5)
+    # Function to handle when the user clicks the "Submit" button
+    def submit_username():
+        """Get Letterboxd data given a username"""
 
-# Displaying greeting/loading text
-# loading_message()
+        username = entry_username.get()
+        if username:
+            popup_window.destroy()
+            text_area.config(state=NORMAL)
+            text_area.insert(tkinter.END, f"\n   ")
+            text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+            text_area.insert(
+                tkinter.END,
+                f"\t Collecting data for Username: '{username}'...",
+                "hang",
+            )
+            text_area.config(state=DISABLED)
+            root.update()  # Update the GUI to show changes immediately
+            try:
+                movies = rec_letterbox(username)
+            except Exception as e:
+                messagebox.showerror("Error", f"This Username is not valid: {str(e)}")
+                root.update()  # Update the GUI to show changes immediately
+            genres = list(movies.keys())
 
-# Displaying button
-text_area.window_create(END, window=lb_button, padx=200, pady=20)
-text_area.config(state=DISABLED)
+            text_area.config(state=NORMAL)
+            text_area.insert(tkinter.END, f"\n   ")
+            text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
+            text_area.insert(
+                tkinter.END,
+                f"\t Here are your personalized movie recs according to your letterboxd: \n"
+                + f"'{genres[0]}': '{movies[genres[0]][0]}'... Description: '{movies[genres[0]][1]}' \n"
+                + f"'{genres[1]}': '{movies[genres[1]][0]}'... Description: '{movies[genres[1]][1]}' \n "
+                + f"'{genres[2]}': '{movies[genres[2]][0]}'... Description: '{movies[genres[2]][1]}' \n",
+                "hang",
+            )
+            text_area.config(state=DISABLED)
+            root.update()  # Update the GUI to show changes immediately
+        else:
+            messagebox.showerror("Error", "Please enter a username.")
 
-# open at the center of the screen
-root.eval("tk::PlaceWindow . center")
-root.configure(fg_color="#303030")
-
-w = 650  # width for the Tk root
-h = 700
-# get screen width and height
-ws = root.winfo_screenwidth()  # width of the screen
-hs = root.winfo_screenheight()  # height of the screen
-
-# calculate x and y coordinates for the Tk root window
-x = (ws / 2) - (w / 2)
-y = (hs / 2) - (h / 2)
-
-# set the dimensions of the screen
-# and where it is placed
-root.geometry("%dx%d+%d+%d" % (w, h, x, y))
+    # Add a button to submit the username
+    button_submit = tkinter.Button(popup_window, text="Submit", command=submit_username)
+    button_submit.pack()
 
 
 ###################################### TKINTER FUNCTIONS #########################################
@@ -311,20 +314,31 @@ def get_root():
     return root
 
 
-# Function: given a user's inputted plot description and preferred genre, respond a certain way
 def chat_response(user_input):
+    """Generates a Chatbot response, given some user input
+
+    Args:
+        user_input (str): user's text input
+
+    Returns:
+        str: Chatbot's response
+    """
+
     # Normalize the user's input
     user_input = user_input.lower()
     streaming = [s for s in streaming_toggles.keys() if streaming_toggles[s]]
+
+    # Send input to controller
     response = handle_msg(user_input, streaming)
 
     return response
 
 
 def loading_message(_):
+    """Displays loading message while data for Chatbot loads"""
+
     text_area.config(state=NORMAL)
     text_area.insert(tkinter.END, f"\n   ")
-    # text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
     text_area.insert(
         tkinter.END,
         f"\t One second, data is still loading...\n",
@@ -334,6 +348,7 @@ def loading_message(_):
 
 
 def greeting_message(_):
+    """Displays a greeting message from the Chatbot once data has loaded"""
 
     text_area.config(state=NORMAL)
     text_area.insert(tkinter.END, f"\n   ")
@@ -349,8 +364,9 @@ def greeting_message(_):
     text_area.config(state=DISABLED)
 
 
-# Function: send message
 def send_message():
+    """When a user has inputted something and hits the send button, takes the input and displays Chatbot's response"""
+
     # Get user input
     user_input = user_field.get()
 
@@ -361,7 +377,6 @@ def send_message():
     response = chat_response(user_input)
 
     # Display response
-    ## TO-DO: format this how we want
     text_area.config(state=NORMAL)
     text_area.insert(tkinter.END, f"\n   ")
     text_area.insert(tkinter.END, f"      User:     ", "boldtextuser")
@@ -373,15 +388,8 @@ def send_message():
     text_area.insert(tkinter.END, f"   ")
     text_area.insert(tkinter.END, f"  FLIX Rec:  ", "boldtextbot")
     text_area.insert(tkinter.END, f"\t {response}\n\n", "hang")
-    # text_area.insert(
-    #     tkinter.END, f"\nFeel free to ask for another recommendation!\n\n", "hang"
-    # )
     text_area.config(state=DISABLED)
     text_area.see(tkinter.END)
-
-
-def doFoo(*args):
-    print("Hello, world")
 
 
 ############################# EVENTS TO BE CALLED FROM MAIN ####################
