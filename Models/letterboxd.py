@@ -16,7 +16,16 @@ def get_watched(username):
     images = soup.find_all(class_='image')
     movies = [image.get('alt') for image in images]
 
-
+    for i in range(10):
+        try:
+            url = f'https://letterboxd.com/{username}/likes/films/page/{i+2}/'
+            response = requests.get(url)
+            soup = BeautifulSoup(response.text, 'html.parser')
+        except Exception as e:
+            break
+        images = soup.find_all(class_='image')
+        current_movies = [image.get('alt') for image in images]
+        movies.extend(current_movies)
     return movies 
 
 def get_movie_genres(movies) :
