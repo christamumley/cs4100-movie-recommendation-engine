@@ -6,9 +6,11 @@
 
 ## Setup 
 ### Without retraining the chatbot model: 
-1. Go to [this Google Drive folder](https://drive.google.com/drive/folders/114bY8i-pJH59j-rHaaZ6ZdVGhBz0KXaY?usp=sharing)
-2. Download the zipped "data" file. Unzip into cs4100-movie-recommendation-engine/chatbot/data 
-3. Download the zipped "movie_model_data" file. Unzip into cs4100-movie-recommendation-engine/Models/saved_weights 
+1. Make sure cs4100-movie-recommendation-engine is downloaded either through git clone or just downloaded.
+2. Make sure tkinter is installed it normally comes installed as a standard but just in case run brew install python-tk in the terminal.
+3. Go to [this Google Drive folder](https://drive.google.com/drive/folders/114bY8i-pJH59j-rHaaZ6ZdVGhBz0KXaY?usp=sharing)
+4. Download the zipped "data" file. Unzip into cs4100-movie-recommendation-engine/chatbot/data 
+5. Download the zipped "movie_model_data" file. Unzip into cs4100-movie-recommendation-engine/Models/saved_weights 
 
 ### With training the chatbot model: 
 Open terminal > cd to \chatbot > run `TrainChatbot.py` 
