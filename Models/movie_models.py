@@ -5,7 +5,7 @@ from fuzzywuzzy import fuzz
 import pickle
 import numpy as np
 
-
+#Load all previously trained models
 def load():
     global tfidf_vectorizer
     global tfidf_matrix_summaries
@@ -21,7 +21,7 @@ def load():
     genre_list = movies_data_cleaned.genre_1.unique() 
     print(len(genre_list))
 
-
+#For a given plot, extract only the keywords from it
 def get_keywords(plot):
     # vectorize the given plot
     plot_tfidf = tfidf_vectorizer.transform([plot])
@@ -32,26 +32,31 @@ def get_keywords(plot):
     keywords = sorted(scores.items(), key=lambda x: x[1], reverse=True)
     return [k[0] for k in keywords]
 
+#Recommend movies based on the input plot and according to a given streaming service
 def recommend_movies_based_on_input_plot(input_plot, streaming):
-
+    #vectorize the input plot
     input_vec = tfidf_vectorizer.transform([input_plot])
-
+    #filter movies based on streaming service
     filtered_movies = movies_data_cleaned['service'].apply(lambda s: s in streaming)
     filtered_movies_data = movies_data_cleaned[filtered_movies]
 
+    #if there are movies in the filetered data, calculate the cosine similarity between the input plot and the filtered movies
     if not filtered_movies_data.empty:
+        #extract only the tf-idf scores of the filtered movies
         filtered_tfidf_matrix = tfidf_matrix_summaries[filtered_movies_data.index]
         cosine_sim = cosine_similarity(input_vec, filtered_tfidf_matrix)
+        #Sort similarity scores in descending order
         sim_scores = list(enumerate(cosine_sim[0]))
         sim_scores = sorted(sim_scores, key=lambda x: x[1], reverse=True)
         sim_scores = sim_scores[1:5]
         movie_indices = [i[0] for i in sim_scores]
         
+        #Randly select one of the movies from the top 5 similar movies
         recommend_movie = np.random.choice(list(movies_data_cleaned["title"].iloc[movie_indices]))
         response_str = f"I would recommend you check out {recommend_movie}"
         return response_str
 
-
+#Recommend movies based on the input genre and according to a given streaming service
 def recommend_movies_based_on_genre(input_genre, streaming):
     genre_keywords = get_keywords(input_genre)
     input_vec = tfidf_vectorizer.transform([input_genre])
